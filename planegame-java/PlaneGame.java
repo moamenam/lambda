@@ -2,8 +2,8 @@ public class PlaneGame {
 	class Point {
 		
 		double x,y;
-		double angle;
-		int pointCount;
+		double angle=0;
+		int pointCount=0;
 		Point Clone()
 		{
 			Point p = new Point();
@@ -22,7 +22,6 @@ public class PlaneGame {
 	Point[] relPoint ;
 	Point[] relSecondPoint ;
 	angleConfig[] angle;
-	angleConfig bestAngle;
 	int pointsNum=0,angIndex=0;
 	
 	
@@ -32,6 +31,8 @@ public class PlaneGame {
 		relPoint= new Point[pointsNum];
 		relSecondPoint= new Point[pointsNum];
 		angle = new angleConfig[pointsNum];
+		if(x.length<4)
+			return x.length;
 		for(int i=0;i<x.length;i++)
 		{
 			point[i]= new Point();
@@ -41,12 +42,17 @@ public class PlaneGame {
 		
 		for(int i=0;i<pointsNum-1;i++){
 			setBasePoint(i);
+			if(point[i].pointCount==pointsNum)
+				return pointsNum;
 		}
 		int maxPointCount=0;
 		for(int i=0;i<pointsNum-1;i++){
-			if (point[i].pointCount>maxPointCount)
+			if (point[i].pointCount>maxPointCount){
 				maxPointCount = point[i].pointCount;
+			}
 		}
+		if(maxPointCount<3)
+			return 3;
 		return maxPointCount;
 	}
 	
@@ -58,7 +64,7 @@ public class PlaneGame {
 			angIndex = 0;
 			currentPointCount = getCommonAngleCount(i);
 			//point[index].pointCount= currentPointCount;
-			int tempPreCount = getCommonPerpendicularCount(index+1,relPoint[i].angle);
+			int tempPreCount = getCommonPerpendicularCount(i+1,relPoint[i].angle);
 			if (tempPreCount+currentPointCount>point[index].pointCount)
 				point[index].pointCount=currentPointCount+tempPreCount;
 		}
