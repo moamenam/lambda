@@ -84,7 +84,7 @@ public class PlaneGameTest {
     	
     	int expected = 3;
         int actual = solution.bestShot(x, y);
-
+        System.out.println(actual);
         Assert.assertEquals(expected, actual);
     }
 
