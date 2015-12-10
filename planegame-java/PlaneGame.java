@@ -3,7 +3,15 @@ public class PlaneGame {
 		
 		double x,y;
 		double angle;
-		int pointCount,pendicularPointCount;
+		int pointCount;
+		Point Clone()
+		{
+			Point p = new Point();
+			p.x=this.x;
+			p.y=this.y;
+			p.angle=this.angle;
+			return p;
+		}
 	}
 	class angleConfig{
 		double angle;
@@ -19,10 +27,14 @@ public class PlaneGame {
 	
 	
 	public int bestShot(int[] x, int[] y) {
+		pointsNum = x.length;
 		point = new Point[pointsNum];
 		relPoint= new Point[pointsNum];
+		relSecondPoint= new Point[pointsNum];
+		angle = new angleConfig[pointsNum];
 		for(int i=0;i<x.length;i++)
 		{
+			point[i]= new Point();
 			point[i].x=x[i];
 			point[i].y=(y[i]);
 		}
@@ -40,64 +52,68 @@ public class PlaneGame {
 	
 	private void setBasePoint(int index){
 		for(int i = index+1;i<pointsNum;i++)
-			relPoint[i]= calc_angle(point[i],point[index]);
+			relPoint[i]=  calc_angle(point[i],point[index]);
 		int currentPointCount = 0;
 		for(int i = index+1;i<pointsNum;i++){
 			angIndex = 0;
-			currentPointCount = getCommonAngleCount();
-			point[index].pointCount= getCommonAngleCount();
-			int tempPreCount = getCommonPerpendicularCount(point[i].angle);
+			currentPointCount = getCommonAngleCount(i);
+			//point[index].pointCount= currentPointCount;
+			int tempPreCount = getCommonPerpendicularCount(index+1,relPoint[i].angle);
 			if (tempPreCount+currentPointCount>point[index].pointCount)
 				point[index].pointCount=currentPointCount+tempPreCount;
 		}
 		
 	}
 	
-	private int getCommonPerpendicularCount(double angle){
-		int count=0;
-		for(int i=0;i<pointsNum;i++)
+	private int getCommonPerpendicularCount(int index,double angle){
+		int count=0,tempCount =0;
+		for(int i=index;i<pointsNum;i++)
 		{
-			setSecondBasePoint(i,angle);		
+			tempCount = setSecondBasePoint(i,angle);
+			if (tempCount>count)
+				count= tempCount;
 		}		
 		return count;
 	}
 	
 	private int setSecondBasePoint(int index,double angle){
 		int count=0;
-		for(int i = 0;i<pointsNum;i++)
+		for(int i = index+1;i<pointsNum;i++)
 		{
 			relSecondPoint[i]= calc_angle(point[i],point[index]);
 			if(Math.abs(relSecondPoint[i].angle-angle)==((Double)90.0) || relSecondPoint[i].angle==0)
 				count ++;
 			//point[i].pointCount= getCommonAngleCount()+getCommonPerpendicularCount(point[i].angle);
 		}
+		if (count>0)
+			count++;
 		return count;
 		
 		
 	}
 	
-	private int getCommonAngleCount()
+	private int getCommonAngleCount(int index)
 	{
 		//int index=0;
 		//int xAngleCount=0;
 		//int yAngleCount=0;
 		int count=0;
 		int zeroCount=0;
-		for(int i=0 ;i<pointsNum;i++)
+		for(int i=index ;i<pointsNum;i++)
 		{
 			addAngle(relPoint[i].angle);
 		}
-		angIndex=0;
-		while(angle[angIndex].occurCount!=0)
+		int tempAngIndex=0;
+		while(tempAngIndex<angIndex)
 		{
 			
-			if(angle[angIndex].angle==0)
-				zeroCount=angle[angIndex].occurCount;
-			if (angle[angIndex].occurCount>count)
-				count = angle[angIndex].occurCount;
-			angIndex++;
+			if(angle[tempAngIndex].angle==0)
+				zeroCount=angle[tempAngIndex].occurCount;
+			if (angle[tempAngIndex].occurCount>count)
+				count = angle[tempAngIndex].occurCount;
+			tempAngIndex++;
 		}
-		return count+zeroCount;
+		return count+zeroCount+1;
 		
 	}
 	
@@ -105,22 +121,25 @@ public class PlaneGame {
 	{
 		for(int i=0;i<angle.length;i++)
 		{
-			if(angle[i].angle==ang)
+			if(i>=angIndex)
 			{
-				angle[i].occurCount++;
-				break;
-			}
-			else if (angle[i].occurCount==0)
-			{
+				angle[i] = new angleConfig(); 
 				angle[i].occurCount++;
 				angle[i].angle= ang;
+				angIndex++;
+				break;
+			}
+			if(angle[i].angle ==ang)
+			{
+				angle[i].occurCount++;
 				break;
 			}
 		}
 	}
 	
-	private Point calc_angle(Point x,Point basePoint){
+	private Point calc_angle(Point p,Point basePoint){
 		
+		Point x = p.Clone();
 		if(x.x-basePoint.x==0&&x.y-basePoint.y==0)
 			x.angle=0;
 		else if(x.x-basePoint.x==0)
@@ -130,7 +149,7 @@ public class PlaneGame {
 		else
 		{
 			//x.Hypotenuse =  Math.sqrt(Math.pow((x.x-basePoint.x),2) + Math.pow((x.y-basePoint.y),2));
-			x.angle = Math.atan((x.y-basePoint.y)/(x.x-basePoint.x));
+			x.angle = Math.toDegrees(Math.atan((x.y-basePoint.y)/(x.x-basePoint.x)));
 		}
 		
 		return x;
