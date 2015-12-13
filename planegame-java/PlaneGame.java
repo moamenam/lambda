@@ -4,6 +4,7 @@ public class PlaneGame {
 		double x,y;
 		double angle=0;
 		int pointCount=0;
+		boolean hasPrependicular=false;
 		Point Clone()
 		{
 			Point p = new Point();
@@ -63,12 +64,14 @@ public class PlaneGame {
 		for(int i = index+1;i<pointsNum;i++){
 			angIndex = 0;
 			currentPointCount = getCommonAngleCount(i);
-			//point[index].pointCount= currentPointCount;
 			int tempPreCount = getCommonPerpendicularCount(i+1,relPoint[i].angle);
 			if (tempPreCount+currentPointCount>point[index].pointCount)
+			{
+				if((tempPreCount==0)&&(pointsNum>currentPointCount))
+					tempPreCount++;
 				point[index].pointCount=currentPointCount+tempPreCount;
+			}
 		}
-		
 	}
 	
 	private int getCommonPerpendicularCount(int index,double angle){
@@ -89,20 +92,14 @@ public class PlaneGame {
 			relSecondPoint[i]= calc_angle(point[i],point[index]);
 			if(Math.abs(relSecondPoint[i].angle-angle)==((Double)90.0) || relSecondPoint[i].angle==0)
 				count ++;
-			//point[i].pointCount= getCommonAngleCount()+getCommonPerpendicularCount(point[i].angle);
 		}
 		if (count>0)
 			count++;
-		return count;
-		
-		
+		return count;		
 	}
 	
 	private int getCommonAngleCount(int index)
 	{
-		//int index=0;
-		//int xAngleCount=0;
-		//int yAngleCount=0;
 		int count=0;
 		int zeroCount=0;
 		for(int i=index ;i<pointsNum;i++)
@@ -120,7 +117,6 @@ public class PlaneGame {
 			tempAngIndex++;
 		}
 		return count+zeroCount+1;
-		
 	}
 	
 	private void addAngle(double ang)
@@ -153,10 +149,7 @@ public class PlaneGame {
 		else if (x.y-basePoint.y==0)
 			x.angle=180;
 		else
-		{
-			//x.Hypotenuse =  Math.sqrt(Math.pow((x.x-basePoint.x),2) + Math.pow((x.y-basePoint.y),2));
 			x.angle = Math.toDegrees(Math.atan((x.y-basePoint.y)/(x.x-basePoint.x)));
-		}
 		
 		return x;
 		
