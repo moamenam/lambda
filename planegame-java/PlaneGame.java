@@ -4,7 +4,6 @@ public class PlaneGame {
 		double x,y;
 		double angle=0;
 		int pointCount=0;
-		boolean hasPrependicular=false;
 		Point Clone()
 		{
 			Point p = new Point();
@@ -65,7 +64,7 @@ public class PlaneGame {
 			angIndex = 0;
 			currentPointCount = getCommonAngleCount(i);
 			int tempPreCount = getCommonPerpendicularCount(i+1,relPoint[i].angle);
-			if (tempPreCount+currentPointCount>point[index].pointCount)
+			if (tempPreCount+currentPointCount>=point[index].pointCount)
 			{
 				if((tempPreCount==0)&&(pointsNum>currentPointCount))
 					tempPreCount++;
